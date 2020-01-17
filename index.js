@@ -3,11 +3,16 @@ const express = require('express');
 const discord = require('discord.js');
 const youtube = require('yt-search');
 const client = new discord.Client();
+const ytdl = require('ytdl-core');
+
+const streamOptions = { seek: 0, volume: 1 };
+const broadcast = client.createVoiceBroadcast();
 
 const app = express();
 
 var bot_secret_token = process.env.DISCORD_SECRET_TOKEN;
-var botChannel;
+var textChannel;
+var voiceChannel;
 
 
 app.listen(8000, () => console.log('Listening on port 8000!'));
@@ -26,8 +31,12 @@ client.on('ready', () => {
         console.log("- " + guild.name);
         guild.channels.forEach((channel) => {
             console.log(` -- ${channel.name} (${channel.type}) - ${channel.id}`);
-            if(channel.name === 'general' && channel.type === "text") {
-                botChannel = client.channels.get(channel.id);
+            if(channel.name === 'meme-spam' && channel.type === "text") {
+                textChannel = client.channels.get(channel.id);
+            }
+
+            if(channel.name === 'General' && channel.type === 'voice') {
+                voiceChannel = client.channels.get(channel.id);
             }
         });
     })
@@ -42,11 +51,11 @@ client.on('message', (sentMessage) => {
 
     if(sentMessage.content.substring(0, 3) === '!!!') {
         message = sentMessage.content.slice(3)
-        botChannel.send(`Searching for '${message}'`);
+        textChannel.send(`Searching for '${message}'`);
         youtube(message, function(err, res) {
             if(err) {
                 console.log(err);
-                botChannel.send(`Well this is embarassing - I'm broken, but aren't we all`);
+                textChannel.send(`Well this is embarassing - I'm broken, but aren't we all`);
                 client.user.setActivity("Broken");
                 return;
             }
@@ -60,21 +69,26 @@ client.on('message', (sentMessage) => {
 
             myResponse += 'Pick a number from 1 to 10';
 
-            botChannel.send(myResponse);
+            textChannel.send(myResponse);
 
             const filter = m => !isNaN(m.content) && m.content < videos.length+1 && m.content > 0;
             const collector = sentMessage.channel.createMessageCollector(filter);
 
             collector.videos = videos;
             collector.once('collect', function(m) {
-                botChannel.send(this.videos[parseInt(m.content)-1].url);
-                // var commandFile = require('./play.js');
-                // commandFile.run(client, sentMessage, [this.videos[parseInt(m.content)-1].url], ops)
-                
+                textChannel.send(videos[parseInt(m.content)-1].url);
 
-                // const embed = discord.MessageEmbedVideo(new discord.MessageEmbed(new discord.Message()));
-                // embed.url = this.videos[parseInt(m.content)-1].url;
-                // botChannel.send({embed});
+                voiceChannel.join().then(function(connection){
+                    console.log('Connected!');
+                    var url = videos[parseInt(m.content)-1].url;
+                    console.log(url);
+                    // const dispatcher = serverQueue.connection.playStream(ytdl(url));
+                    // const stream = ytdl(`${url.toString()}`, {filter : 'audioonly'});
+                    // broadcast.playStream(stream);
+                    // const dispatcher = connection.playBroadcast(broadcast);
+                    const dispatcher = connection.playBroadcast(connection.playStream(ytdl(url)));
+                })
+                .catch(console.error);
             });
 
             
