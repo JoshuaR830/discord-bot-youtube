@@ -1,0 +1,25 @@
+{
+  "name": "music-bot",
+  "version": "1.0.0",
+  "description": "A fun bot for all the family",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshuaR830/YouTubeDiscordBot.git"
+  },
+  "author": "Joshua Richardson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoshuaR830/YouTubeDiscordBot/issues"
+  },
+  "homepage": "https://github.com/JoshuaR830/YouTubeDiscordBot#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "yt-search": "^1.1.2"
+  }
+}
