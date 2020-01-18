@@ -82,11 +82,15 @@ client.on('message', (sentMessage) => {
                     console.log('Connected!');
                     var url = videos[parseInt(m.content)-1].url;
                     console.log(url);
-                    // const dispatcher = serverQueue.connection.playStream(ytdl(url));
-                    // const stream = ytdl(`${url.toString()}`, {filter : 'audioonly'});
-                    // broadcast.playStream(stream);
-                    // const dispatcher = connection.playBroadcast(broadcast);
-                    const dispatcher = connection.playBroadcast(connection.playStream(ytdl(url)));
+                    console.log("https://youtube.com/watch?v=cO9UdtorHa4");
+                    // const dispatcher = voiceConnection.playStream(ytdl("https://www.youtube.com/watch?v=cO9UdtorHa4"));
+                    const stream = ytdl(`"${url}"`, {filter : 'audioonly'});
+                    // voiceConnection.playOpusStream(stream);
+
+                    console.log(stream);
+                    broadcast.playStream(stream);
+                    const dispatcher = connection.playBroadcast(broadcast);
+                    // const dispatcher = connection.playBroadcast(connection.playStream(ytdl(url)));
                 })
                 .catch(console.error);
             });
